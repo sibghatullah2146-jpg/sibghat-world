@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d19">
+  <meta name="description" content="Sibghat World — useful digital tools for everyone.">
+  <title>Sibghat World — A World Made Easier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-icon">S</span>
+      <span>Sibghat <strong>World</strong></span>
+    </a>
+    <a class="header-link" href="#tools">Explore tools ↗</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">✦ YOUR EVERYDAY DIGITAL COMPANION</div>
+      <h1>A better way to<br><span>get things done.</span></h1>
+      <p class="hero-copy">
+        Useful tools. Simple solutions. Less hassle.
+        Welcome to a world designed to make everyday tasks easier.
+      </p>
+      <a class="primary-button" href="#tools">Explore free tools →</a>
+      <div class="trust-line">✦ Built for everyone, everywhere</div>
+    </section>
+
+    <section class="tools-section" id="tools">
+      <div class="section-heading">
+        <div>
+          <div class="section-label">THE TOOLBOX</div>
+          <h2>What do you need today?</h2>
+        </div>
+        <span class="tool-count">FIRST TOOL</span>
+      </div>
+
+      <article class="tool-card">
+        <div class="tool-symbol">Aa</div>
+        <div class="tool-content">
+          <span class="tool-tag">TEXT SIMPLIFIER</span>
+          <h3>Make text easier to understand</h3>
+          <p>Start with a sentence or paragraph and get help understanding it.</p>
+
+          <label for="language">Choose your language</label>
+          <select id="language">
+            <option value="ur">Urdu</option>
+            <option value="roman">Roman Urdu</option>
+            <option value="en">Simple English</option>
+          </select>
+
+          <label for="sourceText">Your text</label>
+          <textarea id="sourceText" rows="5" maxlength="5000"
+            placeholder="Paste your text here..."></textarea>
+
+          <div class="text-meta">
+            <span id="charCount">0 / 5000</span>
+            <button id="clearButton" class="text-button" type="button">Clear text</button>
+          </div>
+
+          <button id="simplifyButton" class="primary-button full-button" type="button">
+            Make it easier →
+          </button>
+
+          <div id="resultBox" class="result-box" aria-live="polite" hidden>
+            <div class="result-heading">YOUR RESULT</div>
+            <p id="resultText"></p>
+            <button id="copyButton" class="secondary-button" type="button">Copy result</button>
+          </div>
+
+          <p class="tool-note">
+            Early demo: this version does not yet use a real AI service.
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <section class="promise">
+      <span class="promise-icon">✦</span>
+      <div>
+        <h2>Technology should help everyone.</h2>
+        <p>We are starting small, learning from real people, and building useful tools one step at a time.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#">
+      <span class="brand-icon">S</span>
+      <span>Sibghat <strong>World</strong></span>
+    </a>
+    <p>Made with purpose. Built for everyone.</p>
+    <span>© <span id="year"></span> Sibghat World</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
