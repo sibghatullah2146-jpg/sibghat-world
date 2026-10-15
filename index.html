@@ -5,10 +5,83 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080d19">
-  <meta name="description" content="Sibghat World — free AI tools for simplifying and translating text.">
+  <meta name="description" content="Sibghat World — simplify text and translate between languages with AI.">
   <title>Sibghat World — A World Made Easier</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .language-search {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 6px 0 10px;
+      padding: 12px 14px;
+      border: 1px solid #d9deea;
+      border-radius: 10px;
+      background: #fff;
+      color: #17243f;
+      font: inherit;
+    }
+
+    .language-search:focus {
+      outline: 2px solid #635bdf;
+      outline-offset: 2px;
+    }
+
+    .language-controls {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .language-field {
+      min-width: 0;
+    }
+
+    .language-field select {
+      width: 100%;
+    }
+
+    .swap-button {
+      min-height: 44px;
+      min-width: 44px;
+      margin-bottom: 1px;
+      border: 1px solid #d9deea;
+      border-radius: 10px;
+      background: #fff;
+      color: #17243f;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .swap-button:hover {
+      border-color: #635bdf;
+    }
+
+    .language-help {
+      margin: 8px 0 14px;
+      color: #68738a;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .tool-card [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 520px) {
+      .language-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .swap-button {
+        justify-self: center;
+        transform: rotate(90deg);
+      }
+    }
+  </style>
 </head>
+
 <body>
   <header class="topbar">
     <a class="brand" href="#">
@@ -39,8 +112,8 @@
         <span class="tool-count">2 FREE TOOLS</span>
       </div>
 
-      <!-- TOOL 1: AI TEXT SIMPLIFIER -->
-      <article class="tool-card">
+      <!-- AI TEXT SIMPLIFIER -->
+      <article class="tool-card" id="simplifier">
         <div class="tool-symbol">Aa</div>
         <div class="tool-content">
           <span class="tool-tag">AI TEXT SIMPLIFIER</span>
@@ -49,18 +122,24 @@
 
           <label for="language">Choose your output language</label>
           <select id="language">
-            <option value="ur">Urdu</option>
+            <option value="ur">Urdu — اردو</option>
             <option value="roman">Roman Urdu</option>
             <option value="en">Simple English</option>
           </select>
 
           <label for="sourceText">Your text</label>
-          <textarea id="sourceText" rows="5" maxlength="5000"
-            placeholder="Paste your text here..."></textarea>
+          <textarea
+            id="sourceText"
+            rows="5"
+            maxlength="5000"
+            placeholder="Paste your text here..."
+          ></textarea>
 
           <div class="text-meta">
             <span id="charCount">0 / 5000</span>
-            <button id="clearButton" class="text-button" type="button">Clear text</button>
+            <button id="clearButton" class="text-button" type="button">
+              Clear text
+            </button>
           </div>
 
           <button id="simplifyButton" class="primary-button full-button" type="button">
@@ -81,40 +160,59 @@
         </div>
       </article>
 
-      <!-- TOOL 2: AI TRANSLATOR -->
+      <!-- UNIVERSAL AI TRANSLATOR -->
       <article class="tool-card" id="translator">
         <div class="tool-symbol">文</div>
         <div class="tool-content">
-          <span class="tool-tag">AI TRANSLATOR</span>
-          <h3>Translate words and sentences</h3>
-          <p>Translate your text between Urdu, Roman Urdu, English and other languages.</p>
+          <span class="tool-tag">UNIVERSAL AI TRANSLATOR</span>
+          <h3>Connect with the world</h3>
+          <p>
+            Translate between a wide range of languages.
+            Search for your language and choose where to translate.
+          </p>
 
-          <label for="sourceLanguage">Translate from</label>
-          <select id="sourceLanguage">
-            <option value="auto">Detect language automatically</option>
-            <option value="ur">Urdu</option>
-            <option value="roman">Roman Urdu</option>
-            <option value="en">English</option>
-            <option value="ar">Arabic</option>
-            <option value="hi">Hindi</option>
-            <option value="pa">Punjabi</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-          </select>
+          <label for="sourceLanguageSearch">Search source language</label>
+          <input
+            id="sourceLanguageSearch"
+            class="language-search"
+            type="search"
+            placeholder="Type a language, e.g. German..."
+            autocomplete="off"
+          >
 
-          <label for="targetLanguage">Translate into</label>
-          <select id="targetLanguage">
-            <option value="ur">Urdu</option>
-            <option value="roman">Roman Urdu</option>
-            <option value="en">English</option>
-            <option value="ar">Arabic</option>
-            <option value="hi">Hindi</option>
-            <option value="pa">Punjabi</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-          </select>
+          <div class="language-controls">
+            <div class="language-field">
+              <label for="sourceLanguage">Translate from</label>
+              <select id="sourceLanguage"></select>
+            </div>
+
+            <button
+              id="swapLanguagesButton"
+              class="swap-button"
+              type="button"
+              title="Swap languages"
+              aria-label="Swap source and target languages"
+            >⇄</button>
+
+            <div class="language-field">
+              <label for="targetLanguage">Translate into</label>
+              <select id="targetLanguage"></select>
+            </div>
+          </div>
+
+          <p class="language-help">
+            Source language can be detected automatically. Some languages may have
+            limited translation quality depending on AI support.
+          </p>
+
+          <label for="targetLanguageSearch">Search target language</label>
+          <input
+            id="targetLanguageSearch"
+            class="language-search"
+            type="search"
+            placeholder="Type a language, e.g. Urdu..."
+            autocomplete="off"
+          >
 
           <label for="translatorText">Text to translate</label>
           <textarea
@@ -135,12 +233,7 @@
             Translate text →
           </button>
 
-          <div
-            id="translateResultBox"
-            class="result-box"
-            aria-live="polite"
-            hidden
-          >
+          <div id="translateResultBox" class="result-box" aria-live="polite" hidden>
             <div class="result-heading">TRANSLATION RESULT</div>
             <p id="translateResultText"></p>
             <button
@@ -148,9 +241,7 @@
               class="secondary-button"
               type="button"
               disabled
-            >
-              Copy translation
-            </button>
+            >Copy translation</button>
           </div>
 
           <p class="tool-note">
@@ -164,7 +255,10 @@
       <span class="promise-icon">✦</span>
       <div>
         <h2>Technology should help everyone.</h2>
-        <p>We are starting small, learning from real people, and building useful tools one step at a time.</p>
+        <p>
+          We are starting small, learning from real people, and building useful
+          tools one step at a time.
+        </p>
       </div>
     </section>
   </main>
@@ -177,6 +271,242 @@
     <p>Made with purpose. Built for everyone.</p>
     <span>© <span id="year"></span> Sibghat World</span>
   </footer>
+
+  <script>
+    "use strict";
+
+    const translatorLanguages = [
+      ["auto", "Detect automatically"],
+      ["ur", "Urdu — اردو"],
+      ["roman", "Roman Urdu"],
+      ["en", "English"],
+      ["af", "Afrikaans"],
+      ["sq", "Albanian"],
+      ["am", "Amharic"],
+      ["ar", "Arabic — العربية"],
+      ["hy", "Armenian"],
+      ["as", "Assamese"],
+      ["az", "Azerbaijani"],
+      ["eu", "Basque"],
+      ["be", "Belarusian"],
+      ["bn", "Bengali — বাংলা"],
+      ["bs", "Bosnian"],
+      ["bg", "Bulgarian"],
+      ["my", "Burmese"],
+      ["ca", "Catalan"],
+      ["ceb", "Cebuano"],
+      ["zh", "Chinese — 中文"],
+      ["zh-Hans", "Simplified Chinese"],
+      ["zh-Hant", "Traditional Chinese"],
+      ["hr", "Croatian"],
+      ["cs", "Czech"],
+      ["da", "Danish"],
+      ["nl", "Dutch"],
+      ["et", "Estonian"],
+      ["fil", "Filipino"],
+      ["fi", "Finnish"],
+      ["fr", "French — Français"],
+      ["gl", "Galician"],
+      ["ka", "Georgian"],
+      ["de", "German — Deutsch"],
+      ["el", "Greek"],
+      ["gu", "Gujarati"],
+      ["ha", "Hausa"],
+      ["he", "Hebrew"],
+      ["hi", "Hindi — हिन्दी"],
+      ["hu", "Hungarian"],
+      ["is", "Icelandic"],
+      ["id", "Indonesian"],
+      ["ga", "Irish"],
+      ["it", "Italian"],
+      ["ja", "Japanese — 日本語"],
+      ["jv", "Javanese"],
+      ["kn", "Kannada"],
+      ["kk", "Kazakh"],
+      ["km", "Khmer"],
+      ["rw", "Kinyarwanda"],
+      ["ko", "Korean — 한국어"],
+      ["ku", "Kurdish"],
+      ["ky", "Kyrgyz"],
+      ["lo", "Lao"],
+      ["la", "Latin"],
+      ["lv", "Latvian"],
+      ["lt", "Lithuanian"],
+      ["lb", "Luxembourgish"],
+      ["mk", "Macedonian"],
+      ["mg", "Malagasy"],
+      ["ms", "Malay"],
+      ["ml", "Malayalam"],
+      ["mt", "Maltese"],
+      ["mi", "Maori"],
+      ["mr", "Marathi"],
+      ["mn", "Mongolian"],
+      ["ne", "Nepali"],
+      ["no", "Norwegian"],
+      ["nb", "Norwegian Bokmal"],
+      ["ny", "Nyanja"],
+      ["or", "Odia"],
+      ["ps", "Pashto — پښتو"],
+      ["fa", "Persian — فارسی"],
+      ["pl", "Polish"],
+      ["pt", "Portuguese"],
+      ["pt-BR", "Brazilian Portuguese"],
+      ["pa", "Punjabi — ਪੰਜਾਬੀ"],
+      ["ro", "Romanian"],
+      ["ru", "Russian — Русский"],
+      ["sa", "Sanskrit"],
+      ["gd", "Scottish Gaelic"],
+      ["sr", "Serbian"],
+      ["sd", "Sindhi — سنڌي"],
+      ["si", "Sinhala"],
+      ["sk", "Slovak"],
+      ["sl", "Slovenian"],
+      ["so", "Somali"],
+      ["es", "Spanish — Español"],
+      ["su", "Sundanese"],
+      ["sw", "Swahili"],
+      ["sv", "Swedish"],
+      ["tl", "Tagalog"],
+      ["tg", "Tajik"],
+      ["ta", "Tamil — தமிழ்"],
+      ["te", "Telugu — తెలుగు"],
+      ["th", "Thai — ไทย"],
+      ["tr", "Turkish — Türkçe"],
+      ["tk", "Turkmen"],
+      ["uk", "Ukrainian"],
+      ["uz", "Uzbek"],
+      ["vi", "Vietnamese"],
+      ["cy", "Welsh"],
+      ["fy", "Western Frisian"],
+      ["xh", "Xhosa"],
+      ["yo", "Yoruba"],
+      ["zu", "Zulu"],
+      ["bho", "Bhojpuri"],
+      ["doi", "Dogri"],
+      ["dv", "Dhivehi"],
+      ["eo", "Esperanto"],
+      ["fo", "Faroese"],
+      ["fj", "Fijian"],
+      ["ht", "Haitian Creole"],
+      ["haw", "Hawaiian"],
+      ["hmn", "Hmong"],
+      ["ig", "Igbo"],
+      ["ilo", "Ilocano"],
+      ["sm", "Samoan"],
+      ["st", "Southern Sotho"],
+      ["tn", "Tswana"],
+      ["ts", "Tsonga"],
+      ["ug", "Uyghur"],
+      ["ve", "Venda"],
+      ["war", "Waray"],
+      ["wo", "Wolof"],
+      ["yi", "Yiddish"]
+    ];
+
+    const sourceSelect = document.getElementById("sourceLanguage");
+    const targetSelect = document.getElementById("targetLanguage");
+    const sourceSearch = document.getElementById("sourceLanguageSearch");
+    const targetSearch = document.getElementById("targetLanguageSearch");
+    const swapButton = document.getElementById("swapLanguagesButton");
+
+    function populateLanguageSelect(select, includeAuto, preferredValue) {
+      const previousValue = preferredValue || select.value;
+      const fragment = document.createDocumentFragment();
+
+      translatorLanguages.forEach(function (language) {
+        const code = language[0];
+
+        if (code === "auto" && !includeAuto) {
+          return;
+        }
+
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = language[1];
+        fragment.appendChild(option);
+      });
+
+      select.replaceChildren(fragment);
+
+      const valueExists = Array.from(select.options).some(function (option) {
+        return option.value === previousValue;
+      });
+
+      if (valueExists) {
+        select.value = previousValue;
+      }
+    }
+
+    function filterLanguageSelect(select, query, includeAuto, fallbackValue) {
+      const previousValue = select.value;
+      const searchTerm = query.trim().toLocaleLowerCase();
+
+      const filtered = translatorLanguages.filter(function (language) {
+        if (language[0] === "auto" && !includeAuto) {
+          return false;
+        }
+
+        return (
+          language[0].toLocaleLowerCase().includes(searchTerm) ||
+          language[1].toLocaleLowerCase().includes(searchTerm)
+        );
+      });
+
+      const fragment = document.createDocumentFragment();
+
+      filtered.forEach(function (language) {
+        const option = document.createElement("option");
+        option.value = language[0];
+        option.textContent = language[1];
+        fragment.appendChild(option);
+      });
+
+      select.replaceChildren(fragment);
+
+      const previousStillExists = filtered.some(function (language) {
+        return language[0] === previousValue;
+      });
+
+      if (previousStillExists) {
+        select.value = previousValue;
+      } else if (filtered.some(function (language) {
+        return language[0] === fallbackValue;
+      })) {
+        select.value = fallbackValue;
+      } else if (filtered.length > 0) {
+        select.selectedIndex = 0;
+      }
+    }
+
+    populateLanguageSelect(sourceSelect, true, "auto");
+    populateLanguageSelect(targetSelect, false, "ur");
+
+    sourceSearch.addEventListener("input", function () {
+      filterLanguageSelect(sourceSelect, sourceSearch.value, true, "auto");
+    });
+
+    targetSearch.addEventListener("input", function () {
+      filterLanguageSelect(targetSelect, targetSearch.value, false, "ur");
+    });
+
+    swapButton.addEventListener("click", function () {
+      const sourceValue = sourceSelect.value;
+      const targetValue = targetSelect.value;
+
+      if (sourceValue === "auto") {
+        alert("Choose a specific source language before swapping.");
+        return;
+      }
+
+      populateLanguageSelect(sourceSelect, true, targetValue);
+      populateLanguageSelect(targetSelect, false, sourceValue);
+
+      sourceSearch.value = "";
+      targetSearch.value = "";
+
+      sourceSelect.focus();
+    });
+  </script>
 
   <script src="app.js"></script>
 </body>
