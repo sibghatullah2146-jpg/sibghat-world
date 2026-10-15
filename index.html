@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080d19">
-  <meta name="description" content="Sibghat World — useful digital tools for everyone.">
+  <meta name="description" content="Sibghat World — free AI tools for simplifying and translating text.">
   <title>Sibghat World — A World Made Easier</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -36,17 +36,18 @@
           <div class="section-label">THE TOOLBOX</div>
           <h2>What do you need today?</h2>
         </div>
-        <span class="tool-count">FIRST TOOL</span>
+        <span class="tool-count">2 FREE TOOLS</span>
       </div>
 
+      <!-- TOOL 1: AI TEXT SIMPLIFIER -->
       <article class="tool-card">
         <div class="tool-symbol">Aa</div>
         <div class="tool-content">
-          <span class="tool-tag">TEXT SIMPLIFIER</span>
+          <span class="tool-tag">AI TEXT SIMPLIFIER</span>
           <h3>Make text easier to understand</h3>
-          <p>Start with a sentence or paragraph and get help understanding it.</p>
+          <p>Turn complicated text into clear, simple language.</p>
 
-          <label for="language">Choose your language</label>
+          <label for="language">Choose your output language</label>
           <select id="language">
             <option value="ur">Urdu</option>
             <option value="roman">Roman Urdu</option>
@@ -69,11 +70,91 @@
           <div id="resultBox" class="result-box" aria-live="polite" hidden>
             <div class="result-heading">YOUR RESULT</div>
             <p id="resultText"></p>
-            <button id="copyButton" class="secondary-button" type="button">Copy result</button>
+            <button id="copyButton" class="secondary-button" type="button" disabled>
+              Copy result
+            </button>
           </div>
 
           <p class="tool-note">
-            Early demo: this version does not yet use a real AI service.
+            AI-powered text simplification. Avoid entering passwords or sensitive personal information.
+          </p>
+        </div>
+      </article>
+
+      <!-- TOOL 2: AI TRANSLATOR -->
+      <article class="tool-card" id="translator">
+        <div class="tool-symbol">文</div>
+        <div class="tool-content">
+          <span class="tool-tag">AI TRANSLATOR</span>
+          <h3>Translate words and sentences</h3>
+          <p>Translate your text between Urdu, Roman Urdu, English and other languages.</p>
+
+          <label for="sourceLanguage">Translate from</label>
+          <select id="sourceLanguage">
+            <option value="auto">Detect language automatically</option>
+            <option value="ur">Urdu</option>
+            <option value="roman">Roman Urdu</option>
+            <option value="en">English</option>
+            <option value="ar">Arabic</option>
+            <option value="hi">Hindi</option>
+            <option value="pa">Punjabi</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
+
+          <label for="targetLanguage">Translate into</label>
+          <select id="targetLanguage">
+            <option value="ur">Urdu</option>
+            <option value="roman">Roman Urdu</option>
+            <option value="en">English</option>
+            <option value="ar">Arabic</option>
+            <option value="hi">Hindi</option>
+            <option value="pa">Punjabi</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
+
+          <label for="translatorText">Text to translate</label>
+          <textarea
+            id="translatorText"
+            rows="5"
+            maxlength="5000"
+            placeholder="Enter or paste text to translate..."
+          ></textarea>
+
+          <div class="text-meta">
+            <span id="translatorCharCount">0 / 5000</span>
+            <button id="translatorClearButton" class="text-button" type="button">
+              Clear text
+            </button>
+          </div>
+
+          <button id="translateButton" class="primary-button full-button" type="button">
+            Translate text →
+          </button>
+
+          <div
+            id="translateResultBox"
+            class="result-box"
+            aria-live="polite"
+            hidden
+          >
+            <div class="result-heading">TRANSLATION RESULT</div>
+            <p id="translateResultText"></p>
+            <button
+              id="translateCopyButton"
+              class="secondary-button"
+              type="button"
+              disabled
+            >
+              Copy translation
+            </button>
+          </div>
+
+          <p class="tool-note">
+            Review important translations before using them in official documents.
           </p>
         </div>
       </article>
