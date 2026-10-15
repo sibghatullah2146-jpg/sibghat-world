@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080d19">
-  <meta name="description" content="Sibghat World — simplify text and translate between languages with AI.">
+  <meta name="description" content="Sibghat World — free AI text simplifier and multilingual translator.">
   <title>Sibghat World — A World Made Easier</title>
   <link rel="stylesheet" href="style.css">
 
@@ -13,7 +13,7 @@
     .language-search {
       width: 100%;
       box-sizing: border-box;
-      margin: 6px 0 10px;
+      margin: 7px 0 14px;
       padding: 12px 14px;
       border: 1px solid #d9deea;
       border-radius: 10px;
@@ -29,7 +29,7 @@
 
     .language-controls {
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
       align-items: end;
     }
@@ -45,13 +45,12 @@
     .swap-button {
       min-height: 44px;
       min-width: 44px;
-      margin-bottom: 1px;
       border: 1px solid #d9deea;
       border-radius: 10px;
       background: #fff;
       color: #17243f;
       cursor: pointer;
-      font-size: 20px;
+      font-size: 22px;
     }
 
     .swap-button:hover {
@@ -59,24 +58,122 @@
     }
 
     .language-help {
-      margin: 8px 0 14px;
+      margin: 9px 0 15px;
       color: #68738a;
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.6;
+    }
+
+    .language-section-title {
+      margin: 18px 0 8px;
+      color: #17243f;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .language-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+
+    .language-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+      min-height: 112px;
+      padding: 12px 7px;
+      border: 1px solid #e1e5ef;
+      border-radius: 14px;
+      background: #fff;
+      color: #17243f;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .18s ease, background .18s ease,
+                  transform .18s ease, box-shadow .18s ease;
+    }
+
+    .language-card:hover {
+      border-color: #8c83f2;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(23, 36, 63, .08);
+    }
+
+    .language-card.selected {
+      border: 2px solid #635bdf;
+      background: #f0efff;
+      box-shadow: 0 0 0 2px rgba(99, 91, 223, .10);
+    }
+
+    .language-flag {
+      display: block;
+      font-size: 35px;
+      line-height: 1.2;
+    }
+
+    .language-name {
+      display: block;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .language-selected-label {
+      display: block;
+      margin-top: 2px;
+      color: #635bdf;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .language-empty {
+      grid-column: 1 / -1;
+      padding: 22px 12px;
+      border: 1px dashed #d9deea;
+      border-radius: 12px;
+      color: #68738a;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .visually-hidden-select {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
     }
 
     .tool-card [hidden] {
       display: none !important;
     }
 
-    @media (max-width: 520px) {
-      .language-controls {
-        grid-template-columns: 1fr;
+    @media (max-width: 420px) {
+      .language-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
       }
 
-      .swap-button {
-        justify-self: center;
-        transform: rotate(90deg);
+      .language-card {
+        min-height: 100px;
+        padding: 10px 4px;
+      }
+
+      .language-flag {
+        font-size: 30px;
+      }
+
+      .language-name {
+        font-size: 11px;
       }
     }
   </style>
@@ -128,12 +225,8 @@
           </select>
 
           <label for="sourceText">Your text</label>
-          <textarea
-            id="sourceText"
-            rows="5"
-            maxlength="5000"
-            placeholder="Paste your text here..."
-          ></textarea>
+          <textarea id="sourceText" rows="5" maxlength="5000"
+            placeholder="Paste your text here..."></textarea>
 
           <div class="text-meta">
             <span id="charCount">0 / 5000</span>
@@ -162,23 +255,19 @@
 
       <!-- UNIVERSAL AI TRANSLATOR -->
       <article class="tool-card" id="translator">
-        <div class="tool-symbol">文</div>
+        <div class="tool-symbol">🌍</div>
         <div class="tool-content">
           <span class="tool-tag">UNIVERSAL AI TRANSLATOR</span>
           <h3>Connect with the world</h3>
           <p>
-            Translate between a wide range of languages.
-            Search for your language and choose where to translate.
+            Choose your language visually. Click a flag to select
+            the language you want your text translated into.
           </p>
 
           <label for="sourceLanguageSearch">Search source language</label>
-          <input
-            id="sourceLanguageSearch"
-            class="language-search"
-            type="search"
-            placeholder="Type a language, e.g. German..."
-            autocomplete="off"
-          >
+          <input id="sourceLanguageSearch" class="language-search"
+            type="search" placeholder="Search source language..."
+            autocomplete="off">
 
           <div class="language-controls">
             <div class="language-field">
@@ -186,41 +275,35 @@
               <select id="sourceLanguage"></select>
             </div>
 
-            <button
-              id="swapLanguagesButton"
-              class="swap-button"
-              type="button"
-              title="Swap languages"
-              aria-label="Swap source and target languages"
-            >⇄</button>
-
-            <div class="language-field">
-              <label for="targetLanguage">Translate into</label>
-              <select id="targetLanguage"></select>
-            </div>
+            <button id="swapLanguagesButton" class="swap-button"
+              type="button" title="Swap languages"
+              aria-label="Swap source and target languages">⇄</button>
           </div>
 
           <p class="language-help">
-            Source language can be detected automatically. Some languages may have
-            limited translation quality depending on AI support.
+            Choose a source language or detect it automatically.
           </p>
 
-          <label for="targetLanguageSearch">Search target language</label>
-          <input
-            id="targetLanguageSearch"
-            class="language-search"
-            type="search"
-            placeholder="Type a language, e.g. Urdu..."
-            autocomplete="off"
-          >
+          <div class="language-section-title">Choose your target language</div>
+
+          <label for="targetLanguageSearch">Search languages</label>
+          <input id="targetLanguageSearch" class="language-search"
+            type="search" placeholder="Search e.g. Urdu, Japanese, French..."
+            autocomplete="off">
+
+          <div id="languageCards" class="language-cards"
+            aria-label="Target language flags"></div>
+
+          <p id="selectedLanguageMessage" class="language-help"
+            aria-live="polite">Select a language from the flags above.</p>
+
+          <!-- Kept for compatibility with the existing app.js -->
+          <select id="targetLanguage" class="visually-hidden-select"
+            tabindex="-1" aria-hidden="true"></select>
 
           <label for="translatorText">Text to translate</label>
-          <textarea
-            id="translatorText"
-            rows="5"
-            maxlength="5000"
-            placeholder="Enter or paste text to translate..."
-          ></textarea>
+          <textarea id="translatorText" rows="5" maxlength="5000"
+            placeholder="Enter or paste text to translate..."></textarea>
 
           <div class="text-meta">
             <span id="translatorCharCount">0 / 5000</span>
@@ -236,16 +319,13 @@
           <div id="translateResultBox" class="result-box" aria-live="polite" hidden>
             <div class="result-heading">TRANSLATION RESULT</div>
             <p id="translateResultText"></p>
-            <button
-              id="translateCopyButton"
-              class="secondary-button"
-              type="button"
-              disabled
-            >Copy translation</button>
+            <button id="translateCopyButton" class="secondary-button"
+              type="button" disabled>Copy translation</button>
           </div>
 
           <p class="tool-note">
             Review important translations before using them in official documents.
+            Language availability and quality may vary.
           </p>
         </div>
       </article>
@@ -276,149 +356,150 @@
     "use strict";
 
     const translatorLanguages = [
-      ["auto", "Detect automatically"],
-      ["ur", "Urdu — اردو"],
-      ["roman", "Roman Urdu"],
-      ["en", "English"],
-      ["af", "Afrikaans"],
-      ["sq", "Albanian"],
-      ["am", "Amharic"],
-      ["ar", "Arabic — العربية"],
-      ["hy", "Armenian"],
-      ["as", "Assamese"],
-      ["az", "Azerbaijani"],
-      ["eu", "Basque"],
-      ["be", "Belarusian"],
-      ["bn", "Bengali — বাংলা"],
-      ["bs", "Bosnian"],
-      ["bg", "Bulgarian"],
-      ["my", "Burmese"],
-      ["ca", "Catalan"],
-      ["ceb", "Cebuano"],
-      ["zh", "Chinese — 中文"],
-      ["zh-Hans", "Simplified Chinese"],
-      ["zh-Hant", "Traditional Chinese"],
-      ["hr", "Croatian"],
-      ["cs", "Czech"],
-      ["da", "Danish"],
-      ["nl", "Dutch"],
-      ["et", "Estonian"],
-      ["fil", "Filipino"],
-      ["fi", "Finnish"],
-      ["fr", "French — Français"],
-      ["gl", "Galician"],
-      ["ka", "Georgian"],
-      ["de", "German — Deutsch"],
-      ["el", "Greek"],
-      ["gu", "Gujarati"],
-      ["ha", "Hausa"],
-      ["he", "Hebrew"],
-      ["hi", "Hindi — हिन्दी"],
-      ["hu", "Hungarian"],
-      ["is", "Icelandic"],
-      ["id", "Indonesian"],
-      ["ga", "Irish"],
-      ["it", "Italian"],
-      ["ja", "Japanese — 日本語"],
-      ["jv", "Javanese"],
-      ["kn", "Kannada"],
-      ["kk", "Kazakh"],
-      ["km", "Khmer"],
-      ["rw", "Kinyarwanda"],
-      ["ko", "Korean — 한국어"],
-      ["ku", "Kurdish"],
-      ["ky", "Kyrgyz"],
-      ["lo", "Lao"],
-      ["la", "Latin"],
-      ["lv", "Latvian"],
-      ["lt", "Lithuanian"],
-      ["lb", "Luxembourgish"],
-      ["mk", "Macedonian"],
-      ["mg", "Malagasy"],
-      ["ms", "Malay"],
-      ["ml", "Malayalam"],
-      ["mt", "Maltese"],
-      ["mi", "Maori"],
-      ["mr", "Marathi"],
-      ["mn", "Mongolian"],
-      ["ne", "Nepali"],
-      ["no", "Norwegian"],
-      ["nb", "Norwegian Bokmal"],
-      ["ny", "Nyanja"],
-      ["or", "Odia"],
-      ["ps", "Pashto — پښتو"],
-      ["fa", "Persian — فارسی"],
-      ["pl", "Polish"],
-      ["pt", "Portuguese"],
-      ["pt-BR", "Brazilian Portuguese"],
-      ["pa", "Punjabi — ਪੰਜਾਬੀ"],
-      ["ro", "Romanian"],
-      ["ru", "Russian — Русский"],
-      ["sa", "Sanskrit"],
-      ["gd", "Scottish Gaelic"],
-      ["sr", "Serbian"],
-      ["sd", "Sindhi — سنڌي"],
-      ["si", "Sinhala"],
-      ["sk", "Slovak"],
-      ["sl", "Slovenian"],
-      ["so", "Somali"],
-      ["es", "Spanish — Español"],
-      ["su", "Sundanese"],
-      ["sw", "Swahili"],
-      ["sv", "Swedish"],
-      ["tl", "Tagalog"],
-      ["tg", "Tajik"],
-      ["ta", "Tamil — தமிழ்"],
-      ["te", "Telugu — తెలుగు"],
-      ["th", "Thai — ไทย"],
-      ["tr", "Turkish — Türkçe"],
-      ["tk", "Turkmen"],
-      ["uk", "Ukrainian"],
-      ["uz", "Uzbek"],
-      ["vi", "Vietnamese"],
-      ["cy", "Welsh"],
-      ["fy", "Western Frisian"],
-      ["xh", "Xhosa"],
-      ["yo", "Yoruba"],
-      ["zu", "Zulu"],
-      ["bho", "Bhojpuri"],
-      ["doi", "Dogri"],
-      ["dv", "Dhivehi"],
-      ["eo", "Esperanto"],
-      ["fo", "Faroese"],
-      ["fj", "Fijian"],
-      ["ht", "Haitian Creole"],
-      ["haw", "Hawaiian"],
-      ["hmn", "Hmong"],
-      ["ig", "Igbo"],
-      ["ilo", "Ilocano"],
-      ["sm", "Samoan"],
-      ["st", "Southern Sotho"],
-      ["tn", "Tswana"],
-      ["ts", "Tsonga"],
-      ["ug", "Uyghur"],
-      ["ve", "Venda"],
-      ["war", "Waray"],
-      ["wo", "Wolof"],
-      ["yi", "Yiddish"]
+      ["auto", "Detect automatically", "🌐"],
+      ["ur", "Urdu — اردو", "🇵🇰"],
+      ["roman", "Roman Urdu", "🇵🇰"],
+      ["en", "English", "🇬🇧"],
+      ["af", "Afrikaans", "🇿🇦"],
+      ["sq", "Albanian", "🇦🇱"],
+      ["am", "Amharic", "🇪🇹"],
+      ["ar", "Arabic — العربية", "🇸🇦"],
+      ["hy", "Armenian", "🇦🇲"],
+      ["as", "Assamese", "🇮🇳"],
+      ["az", "Azerbaijani", "🇦🇿"],
+      ["eu", "Basque", "🇪🇸"],
+      ["be", "Belarusian", "🇧🇾"],
+      ["bn", "Bengali — বাংলা", "🇧🇩"],
+      ["bs", "Bosnian", "🇧🇦"],
+      ["bg", "Bulgarian", "🇧🇬"],
+      ["my", "Burmese", "🇲🇲"],
+      ["ca", "Catalan", "🇪🇸"],
+      ["ceb", "Cebuano", "🇵🇭"],
+      ["zh", "Chinese — 中文", "🇨🇳"],
+      ["zh-Hans", "Simplified Chinese", "🇨🇳"],
+      ["zh-Hant", "Traditional Chinese", "🇹🇼"],
+      ["hr", "Croatian", "🇭🇷"],
+      ["cs", "Czech", "🇨🇿"],
+      ["da", "Danish", "🇩🇰"],
+      ["nl", "Dutch", "🇳🇱"],
+      ["et", "Estonian", "🇪🇪"],
+      ["fil", "Filipino", "🇵🇭"],
+      ["fi", "Finnish", "🇫🇮"],
+      ["fr", "French — Français", "🇫🇷"],
+      ["gl", "Galician", "🇪🇸"],
+      ["ka", "Georgian", "🇬🇪"],
+      ["de", "German — Deutsch", "🇩🇪"],
+      ["el", "Greek", "🇬🇷"],
+      ["gu", "Gujarati", "🇮🇳"],
+      ["ha", "Hausa", "🇳🇬"],
+      ["he", "Hebrew", "🇮🇱"],
+      ["hi", "Hindi — हिन्दी", "🇮🇳"],
+      ["hu", "Hungarian", "🇭🇺"],
+      ["is", "Icelandic", "🇮🇸"],
+      ["id", "Indonesian", "🇮🇩"],
+      ["ga", "Irish", "🇮🇪"],
+      ["it", "Italian", "🇮🇹"],
+      ["ja", "Japanese — 日本語", "🇯🇵"],
+      ["jv", "Javanese", "🇮🇩"],
+      ["kn", "Kannada", "🇮🇳"],
+      ["kk", "Kazakh", "🇰🇿"],
+      ["km", "Khmer", "🇰🇭"],
+      ["rw", "Kinyarwanda", "🇷🇼"],
+      ["ko", "Korean — 한국어", "🇰🇷"],
+      ["ku", "Kurdish", "🌐"],
+      ["ky", "Kyrgyz", "🇰🇬"],
+      ["lo", "Lao", "🇱🇦"],
+      ["la", "Latin", "🌐"],
+      ["lv", "Latvian", "🇱🇻"],
+      ["lt", "Lithuanian", "🇱🇹"],
+      ["lb", "Luxembourgish", "🇱🇺"],
+      ["mk", "Macedonian", "🇲🇰"],
+      ["mg", "Malagasy", "🇲🇬"],
+      ["ms", "Malay", "🇲🇾"],
+      ["ml", "Malayalam", "🇮🇳"],
+      ["mt", "Maltese", "🇲🇹"],
+      ["mi", "Maori", "🇳🇿"],
+      ["mr", "Marathi", "🇮🇳"],
+      ["mn", "Mongolian", "🇲🇳"],
+      ["ne", "Nepali", "🇳🇵"],
+      ["no", "Norwegian", "🇳🇴"],
+      ["nb", "Norwegian Bokmal", "🇳🇴"],
+      ["ny", "Nyanja", "🇲🇼"],
+      ["or", "Odia", "🇮🇳"],
+      ["ps", "Pashto — پښتو", "🇦🇫"],
+      ["fa", "Persian — فارسی", "🇮🇷"],
+      ["pl", "Polish", "🇵🇱"],
+      ["pt", "Portuguese", "🇵🇹"],
+      ["pt-BR", "Brazilian Portuguese", "🇧🇷"],
+      ["pa", "Punjabi — ਪੰਜਾਬੀ", "🇮🇳"],
+      ["ro", "Romanian", "🇷🇴"],
+      ["ru", "Russian — Русский", "🇷🇺"],
+      ["sa", "Sanskrit", "🇮🇳"],
+      ["gd", "Scottish Gaelic", "🏴󠁧󠁢󠁳󠁣󠁴󠁿"],
+      ["sr", "Serbian", "🇷🇸"],
+      ["sd", "Sindhi — سنڌي", "🇵🇰"],
+      ["si", "Sinhala", "🇱🇰"],
+      ["sk", "Slovak", "🇸🇰"],
+      ["sl", "Slovenian", "🇸🇮"],
+      ["so", "Somali", "🇸🇴"],
+      ["es", "Spanish — Español", "🇪🇸"],
+      ["su", "Sundanese", "🇮🇩"],
+      ["sw", "Swahili", "🇹🇿"],
+      ["sv", "Swedish", "🇸🇪"],
+      ["tl", "Tagalog", "🇵🇭"],
+      ["tg", "Tajik", "🇹🇯"],
+      ["ta", "Tamil — தமிழ்", "🇮🇳"],
+      ["te", "Telugu — తెలుగు", "🇮🇳"],
+      ["th", "Thai — ไทย", "🇹🇭"],
+      ["tr", "Turkish — Türkçe", "🇹🇷"],
+      ["tk", "Turkmen", "🇹🇲"],
+      ["uk", "Ukrainian", "🇺🇦"],
+      ["uz", "Uzbek", "🇺🇿"],
+      ["vi", "Vietnamese", "🇻🇳"],
+      ["cy", "Welsh", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"],
+      ["fy", "Western Frisian", "🇳🇱"],
+      ["xh", "Xhosa", "🇿🇦"],
+      ["yo", "Yoruba", "🇳🇬"],
+      ["zu", "Zulu", "🇿🇦"],
+      ["bho", "Bhojpuri", "🇮🇳"],
+      ["doi", "Dogri", "🇮🇳"],
+      ["dv", "Dhivehi", "🇲🇻"],
+      ["eo", "Esperanto", "🌐"],
+      ["fo", "Faroese", "🇫🇴"],
+      ["fj", "Fijian", "🇫🇯"],
+      ["ht", "Haitian Creole", "🇭🇹"],
+      ["haw", "Hawaiian", "🇺🇸"],
+      ["hmn", "Hmong", "🌐"],
+      ["ig", "Igbo", "🇳🇬"],
+      ["ilo", "Ilocano", "🇵🇭"],
+      ["sm", "Samoan", "🇼🇸"],
+      ["st", "Southern Sotho", "🇱🇸"],
+      ["tn", "Tswana", "🇧🇼"],
+      ["ts", "Tsonga", "🇿🇦"],
+      ["ug", "Uyghur", "🌐"],
+      ["ve", "Venda", "🇿🇦"],
+      ["war", "Waray", "🇵🇭"],
+      ["wo", "Wolof", "🇸🇳"],
+      ["yi", "Yiddish", "🌐"]
     ];
 
     const sourceSelect = document.getElementById("sourceLanguage");
     const targetSelect = document.getElementById("targetLanguage");
     const sourceSearch = document.getElementById("sourceLanguageSearch");
     const targetSearch = document.getElementById("targetLanguageSearch");
+    const cardsContainer = document.getElementById("languageCards");
+    const selectedMessage = document.getElementById("selectedLanguageMessage");
     const swapButton = document.getElementById("swapLanguagesButton");
 
-    function populateLanguageSelect(select, includeAuto, preferredValue) {
-      const previousValue = preferredValue || select.value;
+    let selectedTarget = "ur";
+
+    function fillSelect(select, includeAuto, selectedValue) {
       const fragment = document.createDocumentFragment();
 
       translatorLanguages.forEach(function (language) {
         const code = language[0];
 
-        if (code === "auto" && !includeAuto) {
-          return;
-        }
+        if (code === "auto" && !includeAuto) return;
 
         const option = document.createElement("option");
         option.value = code;
@@ -428,83 +509,152 @@
 
       select.replaceChildren(fragment);
 
-      const valueExists = Array.from(select.options).some(function (option) {
-        return option.value === previousValue;
+      const found = Array.from(select.options).some(function (option) {
+        return option.value === selectedValue;
       });
 
-      if (valueExists) {
-        select.value = previousValue;
+      if (found) {
+        select.value = selectedValue;
+      } else if (select.options.length) {
+        select.selectedIndex = 0;
       }
     }
 
-    function filterLanguageSelect(select, query, includeAuto, fallbackValue) {
-      const previousValue = select.value;
-      const searchTerm = query.trim().toLocaleLowerCase();
+    function filterSourceLanguages() {
+      const query = sourceSearch.value.trim().toLocaleLowerCase();
+      const oldValue = sourceSelect.value;
 
-      const filtered = translatorLanguages.filter(function (language) {
-        if (language[0] === "auto" && !includeAuto) {
-          return false;
+      const matches = translatorLanguages.filter(function (language) {
+        if (language[0] === "auto") {
+          return !query || "detect automatically auto".includes(query);
         }
 
-        return (
-          language[0].toLocaleLowerCase().includes(searchTerm) ||
-          language[1].toLocaleLowerCase().includes(searchTerm)
-        );
+        return language[0].toLocaleLowerCase().includes(query) ||
+          language[1].toLocaleLowerCase().includes(query);
       });
 
       const fragment = document.createDocumentFragment();
 
-      filtered.forEach(function (language) {
+      matches.forEach(function (language) {
         const option = document.createElement("option");
         option.value = language[0];
         option.textContent = language[1];
         fragment.appendChild(option);
       });
 
-      select.replaceChildren(fragment);
+      sourceSelect.replaceChildren(fragment);
 
-      const previousStillExists = filtered.some(function (language) {
-        return language[0] === previousValue;
+      const oldValueExists = matches.some(function (language) {
+        return language[0] === oldValue;
       });
 
-      if (previousStillExists) {
-        select.value = previousValue;
-      } else if (filtered.some(function (language) {
-        return language[0] === fallbackValue;
-      })) {
-        select.value = fallbackValue;
-      } else if (filtered.length > 0) {
-        select.selectedIndex = 0;
+      if (oldValueExists) {
+        sourceSelect.value = oldValue;
+      } else if (matches.length) {
+        sourceSelect.selectedIndex = 0;
       }
     }
 
-    populateLanguageSelect(sourceSelect, true, "auto");
-    populateLanguageSelect(targetSelect, false, "ur");
+    function renderLanguageCards() {
+      const query = targetSearch.value.trim().toLocaleLowerCase();
 
-    sourceSearch.addEventListener("input", function () {
-      filterLanguageSelect(sourceSelect, sourceSearch.value, true, "auto");
-    });
+      const matches = translatorLanguages.filter(function (language) {
+        if (language[0] === "auto") return false;
 
-    targetSearch.addEventListener("input", function () {
-      filterLanguageSelect(targetSelect, targetSearch.value, false, "ur");
-    });
+        return language[0].toLocaleLowerCase().includes(query) ||
+          language[1].toLocaleLowerCase().includes(query);
+      });
+
+      const fragment = document.createDocumentFragment();
+
+      if (!matches.length) {
+        const empty = document.createElement("div");
+        empty.className = "language-empty";
+        empty.textContent = "No matching language found. Try another name.";
+        fragment.appendChild(empty);
+      } else {
+        matches.forEach(function (language) {
+          const code = language[0];
+          const name = language[1];
+          const flag = language[2];
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "language-card";
+          button.dataset.language = code;
+          button.setAttribute("aria-pressed", String(code === selectedTarget));
+          button.setAttribute("aria-label", "Translate into " + name);
+
+          if (code === selectedTarget) {
+            button.classList.add("selected");
+          }
+
+          const flagElement = document.createElement("span");
+          flagElement.className = "language-flag";
+          flagElement.setAttribute("aria-hidden", "true");
+          flagElement.textContent = flag;
+
+          const nameElement = document.createElement("span");
+          nameElement.className = "language-name";
+          nameElement.textContent = name;
+
+          button.appendChild(flagElement);
+          button.appendChild(nameElement);
+
+          if (code === selectedTarget) {
+            const selectedLabel = document.createElement("span");
+            selectedLabel.className = "language-selected-label";
+            selectedLabel.textContent = "✓ SELECTED";
+            button.appendChild(selectedLabel);
+          }
+
+          button.addEventListener("click", function () {
+            selectedTarget = code;
+            targetSelect.value = code;
+            renderLanguageCards();
+            selectedMessage.textContent = "Translation language: " + name;
+          });
+
+          fragment.appendChild(button);
+        });
+      }
+
+      cardsContainer.replaceChildren(fragment);
+    }
+
+    fillSelect(sourceSelect, true, "auto");
+    fillSelect(targetSelect, false, selectedTarget);
+    renderLanguageCards();
+
+    sourceSearch.addEventListener("input", filterSourceLanguages);
+    targetSearch.addEventListener("input", renderLanguageCards);
 
     swapButton.addEventListener("click", function () {
       const sourceValue = sourceSelect.value;
       const targetValue = targetSelect.value;
 
-      if (sourceValue === "auto") {
-        alert("Choose a specific source language before swapping.");
+      if (!sourceValue || sourceValue === "auto") {
+        alert("Please choose a specific source language before swapping.");
         return;
       }
 
-      populateLanguageSelect(sourceSelect, true, targetValue);
-      populateLanguageSelect(targetSelect, false, sourceValue);
+      fillSelect(sourceSelect, true, targetValue);
+      selectedTarget = sourceValue;
+      fillSelect(targetSelect, false, selectedTarget);
 
       sourceSearch.value = "";
       targetSearch.value = "";
 
-      sourceSelect.focus();
+      filterSourceLanguages();
+      renderLanguageCards();
+
+      const targetLanguage = translatorLanguages.find(function (language) {
+        return language[0] === selectedTarget;
+      });
+
+      selectedMessage.textContent = targetLanguage
+        ? "Translation language: " + targetLanguage[1]
+        : "Select a target language.";
     });
   </script>
 
