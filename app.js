@@ -1,3 +1,11 @@
+
+"use strict";
+
+// Sibghat World AI Worker
+const WORKER_URL =
+  "https://sibghat-world-ai.sibghatullah2146.workers.dev";
+
+// Simplifier elements
 const sourceText = document.getElementById("sourceText");
 const language = document.getElementById("language");
 const charCount = document.getElementById("charCount");
@@ -6,133 +14,350 @@ const simplifyButton = document.getElementById("simplifyButton");
 const resultBox = document.getElementById("resultBox");
 const resultText = document.getElementById("resultText");
 const copyButton = document.getElementById("copyButton");
+
+// Translator elements
+const translatorText = document.getElementById("translatorText");
+const sourceLanguage = document.getElementById("sourceLanguage");
+const targetLanguage = document.getElementById("targetLanguage");
+const translatorCharCount = document.getElementById("translatorCharCount");
+const translatorClearButton = document.getElementById("translatorClearButton");
+const translateButton = document.getElementById("translateButton");
+const translateResultBox = document.getElementById("translateResultBox");
+const translateResultText = document.getElementById("translateResultText");
+const translateCopyButton = document.getElementById("translateCopyButton");
+
 const year = document.getElementById("year");
 
-year.textContent = new Date().getFullYear();
-
-function updateCharacterCount() {
-  charCount.textContent = `${sourceText.value.length} / 5000`;
-}
-
-sourceText.addEventListener("input", updateCharacterCount);
-
-clearButton.addEventListener("click", function () {
-  sourceText.value = "";
-  updateCharacterCount();
-  resultBox.hidden = true;
-  sourceText.focus();
-});
-
-const examples = {
-  en: {
-    "the meeting has been postponed until further notice.":
-      "The meeting will happen later. A new date has not been announced yet.",
-    "please submit the required documents at your earliest convenience.":
-      "Please send the needed documents as soon as you can."
-  },
-  roman: {
-    "the meeting has been postponed until further notice.":
-      "Meeting baad mein hogi. Abhi nayi tareekh nahi batayi gayi.",
-    "please submit the required documents at your earliest convenience.":
-      "Meherbani karke zaroori documents jald se jald bhej dein."
-  },
-  ur: {
-    "the meeting has been postponed until further notice.":
-      "اجلاس ملتوی کر دیا گیا ہے۔ ابھی نئی تاریخ نہیں بتائی گئی۔",
-    "please submit the required documents at your earliest convenience.":
-      "براہِ کرم ضروری دستاویزات جلد از جلد جمع کروا دیں۔"
-  }
+const languageNames = {
+  auto: "Detect automatically",
+  ur: "Urdu",
+  roman: "Roman Urdu",
+  en: "English",
+  ar: "Arabic",
+  hi: "Hindi",
+  pa: "Punjabi",
+  es: "Spanish",
+  fr: "French",
+  de: "German"
 };
 
 const messages = {
   en: {
     empty: "Please enter some text first.",
-    demo: "This is an early demo, not a real AI simplifier. It can simplify only a few built-in example sentences so far. Try one of the example sentences below.",
-    original: "Your original text:",
+    working: "AI is simplifying your text...",
+    error: "Something went wrong. Please try again.",
     copied: "Result copied!",
-    copyError: "Automatic copying did not work. Please select and copy the result manually."
+    copyError: "Copy failed. Please copy the result manually."
   },
   roman: {
     empty: "Pehle apna text likhein ya paste karein.",
-    demo: "Yeh ibtidai demo hai, asal AI nahi. Filhaal yeh sirf kuch pehle se mojood example sentences ko asaan bana sakta hai. Neeche diye gaye example sentences mein se koi try karein.",
-    original: "Aap ka asal text:",
+    working: "AI aap ke text ko asaan bana raha hai...",
+    error: "Kuch masla hua hai. Dobara koshish karein.",
     copied: "Result copy ho gaya!",
-    copyError: "Copy automatic nahi hua. Meherbani karke result ko khud select karke copy karein."
+    copyError: "Copy nahi hua. Result ko khud copy karein."
   },
   ur: {
     empty: "براہِ کرم پہلے اپنا متن لکھیں یا پیسٹ کریں۔",
-    demo: "یہ ابتدائی ڈیمو ہے، حقیقی AI نہیں۔ فی الحال یہ صرف چند پہلے سے موجود مثالوں کو آسان بنا سکتا ہے۔ نیچے دیے گئے جملوں میں سے کوئی ایک آزما کر دیکھیں۔",
-    original: "آپ کا اصل متن:",
+    working: "AI آپ کے متن کو آسان بنا رہا ہے...",
+    error: "کوئی مسئلہ پیش آیا ہے۔ دوبارہ کوشش کریں۔",
     copied: "نتیجہ کاپی ہو گیا!",
-    copyError: "خودکار کاپی نہیں ہو سکی۔ براہِ کرم نتیجے کو خود منتخب کرکے کاپی کریں۔"
+    copyError: "کاپی نہیں ہو سکی۔ نتیجہ خود کاپی کریں۔"
   }
 };
 
-simplifyButton.addEventListener("click", function () {
-  const text = sourceText.value.trim();
-  const selectedLanguage = language.value;
-  const currentMessages = messages[selectedLanguage] || messages.en;
+function getMessages() {
+  return messages[language.value] || messages.en;
+}
 
-  resultBox.hidden = false;
+function showResult(box, element, message) {
+  element.textContent = message;
+  box.hidden = false;
+}
 
-  if (!text) {
-    resultText.textContent = currentMessages.empty;
+function updateCharacterCount() {
+  charCount.textContent = `${sourceText.value.length} / 5000`;
+}
+
+function updateTranslatorCharacterCount() {
+  translatorCharCount.textContent =
+    `${translatorText.value.length} / 5000`;
+}
+
+function updateCopyButton(button, text) {
+  button.disabled = !text || !text.trim();
+}
+
+function showErrorMessage(error, fallbackMessage) {
+  console.error("Sibghat World AI error:", error);
+
+  if (error && error.message) {
+    return error.message;
+  }
+
+  return fallbackMessage;
+}
+
+async function callAI(endpoint, payload) {
+  const response = await fetch(`${WORKER_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  let data;
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("The AI service returned an invalid response.");
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data && data.error
+        ? data.error
+        : `AI request failed (${response.status}). Please try again.`
+    );
+  }
+
+  if (typeof data.result !== "string" || !data.result.trim()) {
+    throw new Error("The AI service returned an empty result.");
+  }
+
+  return data.result.trim();
+}
+
+async function copyText(text, button, successMessage, errorMessage, defaultLabel) {
+  if (!text || !text.trim()) {
     return;
   }
 
-  const normalizedText = text
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-
-  const result = examples[selectedLanguage][normalizedText];
-
-  if (result) {
-    resultText.textContent = result;
-  } else {
-    resultText.textContent =
-      currentMessages.demo + "\n\n" +
-      currentMessages.original + "\n" + text;
-  }
-
-  resultBox.scrollIntoView({
-    behavior: "smooth",
-    block: "nearest"
-  });
-});
-
-copyButton.addEventListener("click", async function () {
-  const text = resultText.textContent;
+  let copied = false;
 
   try {
     await navigator.clipboard.writeText(text);
-    copyButton.textContent = messages[language.value].copied;
-  } catch (error) {
+    copied = true;
+  } catch {
     const temporaryTextarea = document.createElement("textarea");
+
     temporaryTextarea.value = text;
     temporaryTextarea.style.position = "fixed";
     temporaryTextarea.style.opacity = "0";
+    temporaryTextarea.style.pointerEvents = "none";
+
     document.body.appendChild(temporaryTextarea);
     temporaryTextarea.select();
 
-    let copied = false;
-
     try {
       copied = document.execCommand("copy");
-    } catch (copyError) {
+    } catch {
       copied = false;
     }
 
     temporaryTextarea.remove();
-
-    copyButton.textContent = copied
-      ? messages[language.value].copied
-      : messages[language.value].copyError;
   }
 
+  button.textContent = copied ? successMessage : errorMessage;
+
   setTimeout(function () {
-    copyButton.textContent = "Copy result";
-  }, 2000);
-});
+    button.textContent = defaultLabel;
+  }, 2200);
+}
+
+// Set up the page
+if (year) {
+  year.textContent = new Date().getFullYear();
+}
 
 updateCharacterCount();
+updateTranslatorCharacterCount();
+
+// Simplifier: character counter
+sourceText.addEventListener("input", updateCharacterCount);
+
+// Simplifier: clear text
+clearButton.addEventListener("click", function () {
+  sourceText.value = "";
+  updateCharacterCount();
+  resultBox.hidden = true;
+  resultText.textContent = "";
+  copyButton.disabled = true;
+  sourceText.focus();
+});
+
+// Simplifier: AI request
+simplifyButton.addEventListener("click", async function () {
+  const text = sourceText.value.trim();
+  const currentMessages = getMessages();
+
+  if (!text) {
+    showResult(resultBox, resultText, currentMessages.empty);
+    copyButton.disabled = true;
+    return;
+  }
+
+  if (text.length > 5000) {
+    showResult(resultBox, resultText, "Please use 5000 characters or fewer.");
+    copyButton.disabled = true;
+    return;
+  }
+
+  simplifyButton.disabled = true;
+  copyButton.disabled = true;
+  simplifyButton.textContent = currentMessages.working;
+  showResult(resultBox, resultText, currentMessages.working);
+
+  try {
+    const result = await callAI("/api/simplify", {
+      text: text,
+      language: language.value
+    });
+
+    showResult(resultBox, resultText, result);
+    copyButton.disabled = false;
+
+    resultBox.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+  } catch (error) {
+    showResult(
+      resultBox,
+      resultText,
+      showErrorMessage(
+        error,
+        currentMessages.error
+      )
+    );
+    copyButton.disabled = true;
+  } finally {
+    simplifyButton.disabled = false;
+    simplifyButton.textContent = "Make it easier →";
+  }
+});
+
+// Simplifier: copy result
+copyButton.addEventListener("click", async function () {
+  if (copyButton.disabled) {
+    return;
+  }
+
+  const currentMessages = getMessages();
+
+  await copyText(
+    resultText.textContent,
+    copyButton,
+    currentMessages.copied,
+    currentMessages.copyError,
+    "Copy result"
+  );
+});
+
+// Translator: character counter
+translatorText.addEventListener("input", updateTranslatorCharacterCount);
+
+// Translator: clear text
+translatorClearButton.addEventListener("click", function () {
+  translatorText.value = "";
+  updateTranslatorCharacterCount();
+  translateResultBox.hidden = true;
+  translateResultText.textContent = "";
+  translateCopyButton.disabled = true;
+  translatorText.focus();
+});
+
+// Translator: AI translation
+translateButton.addEventListener("click", async function () {
+  const text = translatorText.value.trim();
+
+  if (!text) {
+    showResult(
+      translateResultBox,
+      translateResultText,
+      "Please enter some text to translate."
+    );
+    translateCopyButton.disabled = true;
+    return;
+  }
+
+  if (text.length > 5000) {
+    showResult(
+      translateResultBox,
+      translateResultText,
+      "Please use 5000 characters or fewer."
+    );
+    translateCopyButton.disabled = true;
+    return;
+  }
+
+  if (sourceLanguage.value === targetLanguage.value) {
+    showResult(
+      translateResultBox,
+      translateResultText,
+      "Please choose two different languages."
+    );
+    translateCopyButton.disabled = true;
+    return;
+  }
+
+  const originalLabel = "Translate text →";
+
+  translateButton.disabled = true;
+  translateCopyButton.disabled = true;
+  translateButton.textContent = "Translating...";
+  showResult(
+    translateResultBox,
+    translateResultText,
+    "AI is translating your text..."
+  );
+
+  try {
+    const result = await callAI("/api/translate", {
+      text: text,
+      sourceLanguage: sourceLanguage.value,
+      targetLanguage: targetLanguage.value
+    });
+
+    showResult(translateResultBox, translateResultText, result);
+    translateCopyButton.disabled = false;
+
+    translateResultBox.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+  } catch (error) {
+    showResult(
+      translateResultBox,
+      translateResultText,
+      showErrorMessage(
+        error,
+        "Translation failed. Please try again."
+      )
+    );
+    translateCopyButton.disabled = true;
+  } finally {
+    translateButton.disabled = false;
+    translateButton.textContent = originalLabel;
+  }
+});
+
+// Translator: copy translation
+translateCopyButton.addEventListener("click", async function () {
+  if (translateCopyButton.disabled) {
+    return;
+  }
+
+  await copyText(
+    translateResultText.textContent,
+    translateCopyButton,
+    "Translation copied!",
+    "Copy failed. Please copy the translation manually.",
+    "Copy translation"
+  );
+});
+
+// Keep result buttons disabled until a result exists.
+updateCopyButton(copyButton, "");
+updateCopyButton(translateCopyButton, "");
